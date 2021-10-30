@@ -1,0 +1,15 @@
+{
+  "name": "frontend",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "scripts": {
+    "start": "tsc && node src/index.ts"
+  },
+  "devDependencies": {
+    "ts-node": "^10.4.0"
+  },
+  "dependencies": {
+    "typescript": "^4.4.4"
+  }
+}
