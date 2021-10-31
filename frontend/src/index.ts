@@ -1,5 +1,5 @@
-import DeviceController from './deviceController/DeviceController';
-import GetUserMedia from './deviceController/getUserMedia';
-import GetUserMediaError from './deviceController/GetUserMediaError';
+import { Constraints, GetMediaError, GetMediaLists } from './deviceController/DeviceController';
+import GetUserDevices from './deviceController/GetUserDevices';
+import GetUserDevicesError from './deviceController/GetUserDevicesError';
 
-export { DeviceController, GetUserMedia, GetUserMediaError };
+export { Constraints, GetMediaError, GetMediaLists, GetUserDevices, GetUserDevicesError };
