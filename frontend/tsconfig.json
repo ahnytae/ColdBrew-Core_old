@@ -9,7 +9,7 @@
     "downlevelIteration": true,
     "strict": true,
     "isolatedModules": false,
-    "noUnusedLocals": true,
+    "noUnusedLocals": false,
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
     "baseUrl": "./",
