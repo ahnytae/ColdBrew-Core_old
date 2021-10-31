@@ -1,7 +1,7 @@
 import { Constraints, GetMediaError, GetMediaLists } from './DeviceController';
 
 export default class GetUserDevices {
-  static async getDeviceAllow(constraints: Constraints): Promise<MediaStream | GetMediaError> {
+  static async getDeviceStream(constraints: Constraints): Promise<MediaStream | GetMediaError> {
     try {
       const stream = await navigator.mediaDevices.getUserMedia(constraints);
       if (stream) {
@@ -60,6 +60,14 @@ export default class GetUserDevices {
           name: 'enumeration fails',
         },
       };
+    }
+  }
+
+  static async attachMediaStream(videoEl: HTMLVideoElement, stream: MediaStream) {
+    try {
+      videoEl.srcObject = stream;
+    } catch {
+      console.error('type check video Element or stream');
     }
   }
 }
