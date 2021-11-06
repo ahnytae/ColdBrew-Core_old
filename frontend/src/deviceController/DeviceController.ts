@@ -19,11 +19,11 @@ export type GetMediaError = {
   stream?: MediaStream;
 };
 
-export type GetMediaLists = {
+export type GetDeviceList = {
   isError: boolean;
   errorData?: {
     name: string;
     message?: string;
   };
-  lists?: MediaDeviceInfo[];
+  list?: MediaDeviceInfo[];
 };

@@ -1,10 +1,23 @@
-import { Constraints, GetMediaError, GetMediaLists } from './DeviceController';
+import { Constraints, GetMediaError, GetDeviceList } from './DeviceController';
 
 export class GetUserDevices {
-  static async getDeviceStream(constraints: Constraints): Promise<MediaStream | GetMediaError> {
+  private static myStream: MediaStream;
+  private static readonly constraints: Constraints = {
+    audio: true,
+    video: true,
+  };
+
+  get currentVideoTrack(): MediaStreamTrack {
+    return GetUserDevices.myStream.getVideoTracks()[0];
+  }
+
+  static async getDeviceStream(deviceId?: string): Promise<MediaStream | GetMediaError> {
     try {
-      const stream = await navigator.mediaDevices.getUserMedia(constraints);
+      const stream = await navigator.mediaDevices.getUserMedia(
+        !deviceId ? GetUserDevices.constraints : { audio: true, video: { deviceId: { exact: deviceId } } }
+      );
       if (stream) {
+        this.myStream = stream;
         return {
           isError: false,
           stream: stream,
@@ -37,13 +50,13 @@ export class GetUserDevices {
     }
   }
 
-  static async getDeviceLists(): Promise<MediaDeviceInfo[] | GetMediaLists> {
+  static async getDeviceLists(): Promise<MediaDeviceInfo[] | GetDeviceList> {
     try {
-      const lists = await navigator.mediaDevices.enumerateDevices();
-      if (lists) {
+      const list = await navigator.mediaDevices.enumerateDevices();
+      if (list) {
         return {
           isError: false,
-          lists: lists,
+          list: list,
         };
       } else {
         return {
@@ -67,7 +80,23 @@ export class GetUserDevices {
     try {
       videoEl.srcObject = stream;
     } catch {
-      console.error('type check video Element or stream');
+      console.error('%c [fail] type check video Element or stream', 'color: red');
+    }
+  }
+
+  static muteMic(stream: MediaStream): void {
+    try {
+      stream.getAudioTracks().map((audioTrack: MediaStreamTrack) => (audioTrack.enabled = !audioTrack.enabled));
+    } catch {
+      console.log('%c [fail] failed mute Mic', 'color: red');
+    }
+  }
+
+  static onOffCamera(stream: MediaStream): void {
+    try {
+      stream.getVideoTracks().map((videoTrack: MediaStreamTrack) => (videoTrack.enabled = !videoTrack.enabled));
+    } catch {
+      console.log('%c [fail] failed mute Mic', 'color: red');
     }
   }
 }
