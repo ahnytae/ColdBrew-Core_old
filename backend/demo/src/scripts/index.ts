@@ -1,3 +1,4 @@
-let a: number = 65;
-a = 22;
-console.log("demo js run11", a, typeof a);
+import { GetUserDevices } from "../../../../frontend/src/index";
+
+const deviceLists = GetUserDevices.getDeviceLists();
+console.log("list:@@:!!!", deviceLists);
