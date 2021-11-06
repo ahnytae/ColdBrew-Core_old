@@ -5,14 +5,14 @@ const engines = require("consolidate");
 const app = express();
 
 // view 경로 설정
-app.set("views", __dirname + "/demo/src/view");
+app.set("views", __dirname + "/demo/dist");
 
 // 화면 engine을 html로 설정
 app.engine("html", engines.mustache);
 app.set("view engine", "html");
 
 // front routing
-app.use("/demo/src", express.static(__dirname + "/demo/src"));
+app.use(express.static(__dirname + "/demo/dist"));
 app.get("/", (req, res) => res.render("index"));
 app.get("/*", (_, res) => res.redirect("/"));
 
