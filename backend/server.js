@@ -4,6 +4,9 @@ const SocketIO = require("socket.io");
 const engines = require("consolidate");
 const app = express();
 
+const httpServer = http.createServer(app);
+const ioServer = SocketIO(httpServer);
+
 // view 경로 설정
 app.set("views", __dirname + "/demo/dist");
 
@@ -16,4 +19,8 @@ app.use(express.static(__dirname + "/demo/dist"));
 app.get("/", (req, res) => res.render("index"));
 app.get("/*", (_, res) => res.redirect("/"));
 
-app.listen(3000, () => console.log("localhost 3000!"));
+ioServer.on("connection", (socket) => {
+  console.log("connect socket server");
+});
+
+httpServer.listen(3000, () => console.log("server start"));

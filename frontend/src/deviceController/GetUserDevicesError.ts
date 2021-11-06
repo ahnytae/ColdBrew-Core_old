@@ -1,1 +1,1 @@
-export default class GetUserDevicesError extends Error {}
+export class GetUserDevicesError extends Error {}
