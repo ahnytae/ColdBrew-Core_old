@@ -31,6 +31,6 @@ ColdBrew-Core는 Typescript로 만들 예정이고, (SDK 형태)
 
 ## Demo 실행
 
-1. _/backend/demo/src/scripts 내에 ts 파일들 컴파일_
+1. \_/backend/demo 이동 후 yarn build 로 bundle.js 생성.
 2. _/backend_ 이동
 3. `yarn dev` 실행
