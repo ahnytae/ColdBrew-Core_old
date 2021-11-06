@@ -1,6 +1,6 @@
 import { Constraints, GetMediaError, GetMediaLists } from './DeviceController';
 
-export default class GetUserDevices {
+export class GetUserDevices {
   static async getDeviceStream(constraints: Constraints): Promise<MediaStream | GetMediaError> {
     try {
       const stream = await navigator.mediaDevices.getUserMedia(constraints);
