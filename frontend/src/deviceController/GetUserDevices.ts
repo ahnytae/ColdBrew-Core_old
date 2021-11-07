@@ -1,14 +1,15 @@
+import { ColdBrew } from '../service/Core';
 import { Constraints, GetMediaError, GetDeviceList } from './DeviceController';
 
-export class GetUserDevices {
-  private static myStream: MediaStream;
+export class GetUserDevices extends ColdBrew {
   private static readonly constraints: Constraints = {
     audio: true,
     video: true,
   };
 
   get currentVideoTrack(): MediaStreamTrack {
-    return GetUserDevices.myStream.getVideoTracks()[0];
+    const myStream = super.myStream;
+    return myStream.getVideoTracks()[0];
   }
 
   static async getDeviceStream(deviceId?: string): Promise<MediaStream | GetMediaError> {
@@ -17,7 +18,7 @@ export class GetUserDevices {
         !deviceId ? GetUserDevices.constraints : { audio: true, video: { deviceId: { exact: deviceId } } }
       );
       if (stream) {
-        this.myStream = stream;
+        super.MyStream = stream;
         return {
           isError: false,
           stream: stream,

@@ -19,7 +19,7 @@ app.use(express.static(__dirname + "/demo/dist"));
 app.get("/", (req, res) => res.render("index"));
 app.get("/*", (_, res) => res.redirect("/"));
 
-httpServer.listen(3000, () => console.log("server start"));
+httpServer.listen(3000, () => console.log("start server"));
 
 // socket server
 const ROOM_NAME;
@@ -27,10 +27,19 @@ ioServer.on("connection", (socket) => {
   console.log("connect socket server");
 
   socket.on("join-room", (roomName, cb) => {
+    if(typeof cb !== 'function') {
+      console.error('cb is not function');
+    }
+
     ROOM_NAME = roomName;
-    cb();
+    cb && cb();
     socket.to(ROOM_NAME).emit('success-join')
   });
+ 
+  // receive offer
+  socket.on('offer', (offer, roomName) => {
+    socket.io(roomName).emit('%c [receive offer]',offer, 'color: pink');
+  })
 });
 
 /** 
