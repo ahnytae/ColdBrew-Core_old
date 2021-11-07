@@ -31,6 +31,11 @@ ioServer.on("connection", (socket) => {
     cb();
     socket.to(ROOM_NAME).emit('success-join')
   });
+ 
+  // receive offer
+  socket.on('offer', (offer, roomName) => {
+    socket.io(roomName).emit('%c [receive offer]',offer, 'color: pink')
+  })
 });
 
 /** 
