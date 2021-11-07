@@ -8,9 +8,10 @@ export class SignalingController extends ColdBrew {
   private myPeerConnection = new RTCPeerConnection();
 
   joinRoom(roomName: string) {
-    ColdBrew.RoomName = roomName;
-
     socket.emit('join-room', roomName);
+
+    let _roomName = super.RoomName;
+    _roomName = roomName;
 
     // role: offer
     socket.on('success-join', async () => {
@@ -21,7 +22,7 @@ export class SignalingController extends ColdBrew {
       this.myPeerConnection.setLocalDescription(offer);
 
       // send offer
-      socket.emit('offer', offer, ColdBrew.RoomName);
+      socket.emit('offer', offer, _roomName);
 
       // receive offer
       socket.on('offer', offer => {
@@ -31,6 +32,7 @@ export class SignalingController extends ColdBrew {
   }
 
   makeConnection() {
-    ColdBrew.MyStream.getTracks().map((track: MediaStreamTrack) => this.myPeerConnection.addTrack(track, ColdBrew.MyStream));
+    const _myStream = super.MyStream;
+    _myStream.getTracks().map((track: MediaStreamTrack) => this.myPeerConnection.addTrack(track, _myStream));
   }
 }

@@ -3,10 +3,20 @@ export class ColdBrew {
     console.log('%c HELLO ColeBrew !!', 'color: hotpink; font-size:40px; background:black');
   }
 
-  protected static MyStream: MediaStream;
-  protected static RoomName: string;
+  private static MY_STREAM: MediaStream;
+  private static ROOM_NAME: string;
 
-  get myStream(): MediaStream {
-    return ColdBrew.MyStream;
+  get MyStream(): MediaStream {
+    return ColdBrew.MY_STREAM;
+  }
+  set MyStream(stream: MediaStream) {
+    ColdBrew.MY_STREAM = stream;
+  }
+
+  get RoomName(): string {
+    return ColdBrew.ROOM_NAME;
+  }
+  set RoomName(roomName: string) {
+    ColdBrew.ROOM_NAME = roomName;
   }
 }
