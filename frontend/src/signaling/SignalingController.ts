@@ -5,10 +5,9 @@ const socket = io();
 
 export class SignalingController extends ColdBrew {
   //
-  private readonly myPeerConnection = new RTCPeerConnection();
-
-  static startSignaling(): SignalingController {
-    return new SignalingController();
+  private constructor(private myPeerConnection: any) {
+    super();
+    this.myPeerConnection = new RTCPeerConnection();
   }
 
   joinRoom(roomName: string) {
@@ -18,9 +17,22 @@ export class SignalingController extends ColdBrew {
   }
 
   // replace addStream to getTracks()
-  makeConnection() {
+  makeConnection(remoteVideoEl: HTMLVideoElement) {
     const _myStream = super.MyStream;
     _myStream.getTracks().map((track: MediaStreamTrack) => this.myPeerConnection.addTrack(track, _myStream));
+    this.connectIceCandidate(remoteVideoEl);
+  }
+
+  // iceCandidate connect
+  connectIceCandidate(remoteVideoEl: HTMLVideoElement) {
+    this.myPeerConnection.addEventListener('icecandidate', (ice: RTCPeerConnectionIceEvent) => {
+      console.log('%c send icecandidate', '%c color: red');
+      socket.emit('ice', ice, super.RoomName);
+    });
+    this.myPeerConnection.addEventListener('track', (streamObj: any) => {
+      console.log('addStream', streamObj);
+      remoteVideoEl.srcObject = streamObj.stream;
+    });
   }
 
   connectSocket(roomName: string) {
@@ -48,6 +60,11 @@ export class SignalingController extends ColdBrew {
       const answer = await this.myPeerConnection.createAnswer();
       this.myPeerConnection.setLocalDescription(answer);
       socket.emit('answer', answer, roomName);
+    });
+
+    socket.on('ice', ice => {
+      console.log('%c [received icecandidate]', ice, 'color: blue');
+      this.myPeerConnection.addIceCandidate(ice);
     });
   }
 }

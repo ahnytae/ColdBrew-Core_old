@@ -40,6 +40,10 @@ ioServer.on("connection", (socket) => {
   socket.on('offer', (offer, roomName) => {
     socket.io(roomName).emit('%c [receive offer]',offer, 'color: pink');
   })
+
+  socket.on('ice', (ice, roomName) => {
+    socket.to(roomName).emit('icecandidate', ice);
+  })
 });
 
 /** 
