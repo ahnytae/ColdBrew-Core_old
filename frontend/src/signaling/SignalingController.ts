@@ -5,14 +5,25 @@ const socket = io();
 
 export class SignalingController extends ColdBrew {
   //
-  private myPeerConnection = new RTCPeerConnection();
+  private readonly myPeerConnection = new RTCPeerConnection();
+
+  static startSignaling(): SignalingController {
+    return new SignalingController();
+  }
 
   joinRoom(roomName: string) {
     socket.emit('join-room', roomName);
+    super.RoomName = roomName;
+    this.connectSocket(roomName);
+  }
 
-    let _roomName = super.RoomName;
-    _roomName = roomName;
+  // replace addStream to getTracks()
+  makeConnection() {
+    const _myStream = super.MyStream;
+    _myStream.getTracks().map((track: MediaStreamTrack) => this.myPeerConnection.addTrack(track, _myStream));
+  }
 
+  connectSocket(roomName: string) {
     // role: offer
     socket.on('success-join', async () => {
       console.log('%c [success] join room', 'color: blue');
@@ -22,17 +33,21 @@ export class SignalingController extends ColdBrew {
       this.myPeerConnection.setLocalDescription(offer);
 
       // send offer
-      socket.emit('offer', offer, _roomName);
-
-      // receive offer
-      socket.on('offer', offer => {
-        console.log('%c [receive offer]', offer, 'color: blue');
-      });
+      socket.emit('offer', offer, super.RoomName);
     });
-  }
 
-  makeConnection() {
-    const _myStream = super.MyStream;
-    _myStream.getTracks().map((track: MediaStreamTrack) => this.myPeerConnection.addTrack(track, _myStream));
+    socket.on('answer', async answer => {
+      await this.myPeerConnection.setLocalDescription(answer);
+    });
+
+    // role: answer
+    socket.on('offer', async offer => {
+      console.log('%c [receive offer]', offer, 'color: blue');
+
+      this.myPeerConnection.setRemoteDescription(offer);
+      const answer = await this.myPeerConnection.createAnswer();
+      this.myPeerConnection.setLocalDescription(answer);
+      socket.emit('answer', answer, roomName);
+    });
   }
 }

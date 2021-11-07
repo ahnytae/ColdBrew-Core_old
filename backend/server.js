@@ -19,7 +19,7 @@ app.use(express.static(__dirname + "/demo/dist"));
 app.get("/", (req, res) => res.render("index"));
 app.get("/*", (_, res) => res.redirect("/"));
 
-httpServer.listen(3000, () => console.log("server start"));
+httpServer.listen(3000, () => console.log("start server"));
 
 // socket server
 const ROOM_NAME;

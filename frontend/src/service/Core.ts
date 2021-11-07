@@ -6,17 +6,17 @@ export class ColdBrew {
   private static MY_STREAM: MediaStream;
   private static ROOM_NAME: string;
 
-  get MyStream(): MediaStream {
+  protected get MyStream(): MediaStream {
     return ColdBrew.MY_STREAM;
   }
-  set MyStream(stream: MediaStream) {
+  protected set MyStream(stream: MediaStream) {
     ColdBrew.MY_STREAM = stream;
   }
 
-  get RoomName(): string {
+  protected get RoomName(): string {
     return ColdBrew.ROOM_NAME;
   }
-  set RoomName(roomName: string) {
+  protected set RoomName(roomName: string) {
     ColdBrew.ROOM_NAME = roomName;
   }
 }
