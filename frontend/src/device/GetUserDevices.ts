@@ -1,4 +1,4 @@
-import ColdBrew from '../service/Core';
+import { ColdBrew } from '../service/Core';
 import { Constraints, GetMediaError, GetDeviceList, ChangeDeviceType } from './Device';
 
 export class GetUserDevices extends ColdBrew {

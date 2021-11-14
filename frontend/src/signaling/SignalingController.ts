@@ -1,71 +1,98 @@
-// import { io } from 'socket.io-client';
-// // import ColdBrew from 'src/service/Core';
-// import { ColdBrew } from '../index';
+import { ColdBrew } from '../service/Core';
+export class SignalingController extends ColdBrew {
+  //
+  private static myPeerConnection: RTCPeerConnection;
+  private static readonly STUN_URL = {
+    iceServers: [
+      {
+        urls: [
+          'stun:stun.l.google.com:19302',
+          'stun:stun1.l.google.com:19302',
+          'stun:stun2.l.google.com:19302',
+          'stun:stun3.l.google.com:19302',
+          'stun:stun4.l.google.com:19302',
+        ],
+      },
+    ],
+  };
 
-// const socket = io();
+  static joinRoom(roomName: string) {
+    super.RoomName = roomName;
+    ColdBrew.WS.emit('join-room', roomName);
+    this.connectSocket(roomName);
+  }
 
-// export class SignalingController extends ColdBrew {
-//   //
-//   private constructor(private myPeerConnection: any) {
-//     super();
-//     this.myPeerConnection = new RTCPeerConnection();
-//   }
+  // replace addStream to getTracks()
+  static makePeerConnection(remoteVideoEl: HTMLVideoElement) {
+    SignalingController.myPeerConnection = new RTCPeerConnection(SignalingController.STUN_URL);
 
-//   joinRoom(roomName: string) {
-//     socket.emit('join-room', roomName);
-//     super.RoomName = roomName;
-//     this.connectSocket(roomName);
-//   }
+    SignalingController.myPeerConnection.addEventListener('icecandidate', (ice: any) => {
+      console.log('%c sent icecandidate', '%c color: red');
+      const roomName = super.RoomName;
+      ColdBrew.WS.emit('ice', ice, roomName);
+    });
+    SignalingController.myPeerConnection.addEventListener('track', (peerTrack: RTCTrackEvent) => {
+      console.log('got remote peer stream', peerTrack.streams[0]);
+      remoteVideoEl.srcObject = peerTrack.streams[0];
+    });
 
-//   // replace addStream to getTracks()
-//   makeConnection(remoteVideoEl: HTMLVideoElement) {
-//     const _myStream = super.MyStream;
-//     _myStream.getTracks().map((track: MediaStreamTrack) => this.myPeerConnection.addTrack(track, _myStream));
-//     this.connectIceCandidate(remoteVideoEl);
-//   }
+    const stream = ColdBrew.MyStream;
+    stream.getTracks().map((track: MediaStreamTrack) => SignalingController.myPeerConnection.addTrack(track, stream));
+  }
 
-//   // iceCandidate connect
-//   connectIceCandidate(remoteVideoEl: HTMLVideoElement) {
-//     this.myPeerConnection.addEventListener('icecandidate', (ice: RTCPeerConnectionIceEvent) => {
-//       console.log('%c send icecandidate', '%c color: red');
-//       socket.emit('ice', ice, super.RoomName);
-//     });
-//     this.myPeerConnection.addEventListener('track', (streamObj: any) => {
-//       console.log('addStream', streamObj);
-//       remoteVideoEl.srcObject = streamObj.stream;
-//     });
-//   }
+  // iceCandidate connect
+  // static connectIceCandidate(remoteVideoEl: HTMLVideoElement) {
+  //   SignalingController.myPeerConnection.addEventListener('icecandidate', (ice: any) => {
+  //     console.log('%c sent icecandidate', '%c color: red');
+  //     const roomName = super.RoomName;
+  //     ColdBrew.WS.emit('ice', ice, roomName);
+  //   });
+  //   SignalingController.myPeerConnection.addEventListener('track', (peerTrack: any) => {
+  //     console.log('got remote peer stream', peerTrack);
+  //     remoteVideoEl.srcObject = peerTrack.streams[0];
+  //   });
+  // }
 
-//   connectSocket(roomName: string) {
-//     // role: offer
-//     socket.on('success-join', async () => {
-//       console.log('%c [success] join room', 'color: blue');
+  // static attachRemoteStream(remoteVideoEl?: HTMLVideoElement) {
+  //   SignalingController.connectIceCandidate(remoteVideoEl!);
+  // }
 
-//       // create offer + sdp
-//       const offer = await this.myPeerConnection.createOffer();
-//       this.myPeerConnection.setLocalDescription(offer);
+  static connectSocket(roomName: string) {
+    // this.makePeerConnection();
 
-//       // send offer
-//       socket.emit('offer', offer, super.RoomName);
-//     });
+    // role: offer
+    ColdBrew.WS.on('success-join', async () => {
+      console.log('%c [ColdBrew] success join', 'color: #f3602b');
 
-//     socket.on('answer', async answer => {
-//       await this.myPeerConnection.setLocalDescription(answer);
-//     });
+      // create offer + sdp
+      const offer = await SignalingController.myPeerConnection.createOffer();
+      SignalingController.myPeerConnection.setLocalDescription(offer);
 
-//     // role: answer
-//     socket.on('offer', async offer => {
-//       console.log('%c [receive offer]', offer, 'color: blue');
+      // send offer
+      const roomName = ColdBrew.RoomName;
+      ColdBrew.WS.emit('offer', offer, roomName);
+      console.log('%c [ColdBrew] sent offer', 'color: #e64607bc', offer);
+    });
 
-//       this.myPeerConnection.setRemoteDescription(offer);
-//       const answer = await this.myPeerConnection.createAnswer();
-//       this.myPeerConnection.setLocalDescription(answer);
-//       socket.emit('answer', answer, roomName);
-//     });
+    ColdBrew.WS.on('answer', async (answer: any) => {
+      console.log('%c [ColdBrew] received answer', 'color: #e64607bc', answer);
+      await SignalingController.myPeerConnection.setRemoteDescription(answer);
+    });
 
-//     socket.on('ice', ice => {
-//       console.log('%c [received icecandidate]', ice, 'color: blue');
-//       this.myPeerConnection.addIceCandidate(ice);
-//     });
-//   }
-// }
+    // role: answer
+    ColdBrew.WS.on('offer', async (offer: any) => {
+      console.log('%c [ColdBrew] received offer', offer, 'color: #05c088');
+
+      SignalingController.myPeerConnection.setRemoteDescription(offer);
+      const answer = await SignalingController.myPeerConnection.createAnswer();
+      SignalingController.myPeerConnection.setLocalDescription(answer);
+      ColdBrew.WS.emit('answer', answer, roomName);
+      console.log('%c [ColdBrew] sent answer', 'color: #e64607bc', answer);
+    });
+
+    ColdBrew.WS.on('ice', (ice: any) => {
+      console.log('%c [ColdBrew] received icecandidate', ice, 'color: #d3d61e');
+      SignalingController.myPeerConnection.addIceCandidate(ice);
+    });
+  }
+}

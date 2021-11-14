@@ -10,10 +10,12 @@
     <h1>video call - demo</h1>
     <div>
       <input id="onRoomName" type="text" placeholder="room name" />
-      <button>입장</button>
+      <button id='join-btn'>입장</button>
       <select id='device-cam-list'></select>
       <select id='device-mic-list'></select>
       <video id="myVideo" muted autoplay playsinline width="400", height="400"></video>
+      <video id="remoteVideo" autoplay playsinline width="400", height="400"></video>
+
       <button id="change-cam">cam-off</button>
       <button id="change-mic">mic-off</button>
     </div>

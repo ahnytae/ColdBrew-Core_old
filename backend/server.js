@@ -16,30 +16,31 @@ app.set("view engine", "html");
 
 // front routing
 app.use(express.static(__dirname + "/demo/dist"));
-app.get("/", (req, res) => res.render("index"));
+app.get("/", (req, res) => res.render("main"));
 app.get("/room", (req, res) => res.render("room"));
 app.get("/*", (_, res) => res.redirect("/"));
 
 httpServer.listen(3000, () => console.log("start server"));
 
 // socket server
-const ROOM_NAME = "";
+let ROOM_NAME = "";
 ioServer.on("connection", (socket) => {
   console.log("connect socket server");
 
-  socket.on("join-room", (roomName, cb) => {
-    if (typeof cb !== "function") {
-      console.error("cb is not function");
-    }
-
+  socket.on("join-room", (roomName) => {
     ROOM_NAME = roomName;
-    cb && cb();
+    socket.join(roomName);
     socket.to(ROOM_NAME).emit("success-join");
   });
 
-  // receive offer
+  // received offer
   socket.on("offer", (offer, roomName) => {
-    socket.io(roomName).emit("%c [receive offer]", offer, "color: pink");
+    socket.to(roomName).emit("offer", offer);
+  });
+
+  // received answer
+  socket.on("answer", (answer, roomName) => {
+    socket.to(roomName).emit("answer", answer);
   });
 
   socket.on("ice", (ice, roomName) => {

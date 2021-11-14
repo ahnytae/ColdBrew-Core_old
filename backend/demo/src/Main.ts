@@ -6,7 +6,6 @@ let roomName = "";
 roomNameEl.addEventListener("input", (e: any) => {
   roomName = e.target.value;
 });
-join.addEventListener("click", (e) => {
+join.addEventListener("click", (e: any) => {
   e.preventDefault();
-  window.history.pushState("roomName", "title", "/room");
 });
