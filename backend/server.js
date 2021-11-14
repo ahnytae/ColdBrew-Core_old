@@ -22,28 +22,28 @@ app.get("/*", (_, res) => res.redirect("/"));
 httpServer.listen(3000, () => console.log("start server"));
 
 // socket server
-const ROOM_NAME;
+const ROOM_NAME = "";
 ioServer.on("connection", (socket) => {
   console.log("connect socket server");
 
   socket.on("join-room", (roomName, cb) => {
-    if(typeof cb !== 'function') {
-      console.error('cb is not function');
+    if (typeof cb !== "function") {
+      console.error("cb is not function");
     }
 
     ROOM_NAME = roomName;
     cb && cb();
-    socket.to(ROOM_NAME).emit('success-join')
+    socket.to(ROOM_NAME).emit("success-join");
   });
- 
-  // receive offer
-  socket.on('offer', (offer, roomName) => {
-    socket.io(roomName).emit('%c [receive offer]',offer, 'color: pink');
-  })
 
-  socket.on('ice', (ice, roomName) => {
-    socket.to(roomName).emit('icecandidate', ice);
-  })
+  // receive offer
+  socket.on("offer", (offer, roomName) => {
+    socket.io(roomName).emit("%c [receive offer]", offer, "color: pink");
+  });
+
+  socket.on("ice", (ice, roomName) => {
+    socket.to(roomName).emit("icecandidate", ice);
+  });
 });
 
 /** 
