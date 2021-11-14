@@ -7,8 +7,9 @@ type SelectDeviceIdConstraints = {
   video: { deviceId: { exact: string } };
   audio: boolean;
 };
-
 export type Constraints = NormalConstraints | SelectDeviceIdConstraints;
+
+export type ChangeDeviceType = 'video' | 'mic';
 
 export type GetMediaError = {
   isError: boolean;

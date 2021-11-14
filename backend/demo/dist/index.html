@@ -7,7 +7,16 @@
     <title>Demo</title>
    </head>
   <body>
-    demo
+    <h1>video call - demo</h1>
+    <div>
+      <input id="onRoomName" type="text" placeholder="room name" />
+      <select id='device-cam-list'></select>
+      <select id='device-mic-list'></select>
+      <button>입장</button>
+      <video id="myVideo" muted autoplay playsinline width="400", height="400"></video>
+      <button id="change-cam">cam-off</button>
+      <button id="change-mic">mic-off</button>
+    </div>
     <script defer src="bundle.js"></script>
   </body>
 </html>

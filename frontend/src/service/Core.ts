@@ -1,4 +1,4 @@
-export class ColdBrew {
+export default class ColdBrew {
   constructor() {
     console.log('%c HELLO ColeBrew !!', 'color: hotpink; font-size:40px; background:black');
   }
@@ -6,17 +6,21 @@ export class ColdBrew {
   private static MY_STREAM: MediaStream;
   private static ROOM_NAME: string;
 
-  protected get MyStream(): MediaStream {
+  static init(): ColdBrew {
+    return new ColdBrew();
+  }
+
+  static get MyStream(): MediaStream {
     return ColdBrew.MY_STREAM;
   }
-  protected set MyStream(stream: MediaStream) {
+  static set MyStream(stream: MediaStream) {
     ColdBrew.MY_STREAM = stream;
   }
 
-  protected get RoomName(): string {
+  public get RoomName(): string {
     return ColdBrew.ROOM_NAME;
   }
-  protected set RoomName(roomName: string) {
+  public set RoomName(roomName: string) {
     ColdBrew.ROOM_NAME = roomName;
   }
 }
