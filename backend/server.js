@@ -17,6 +17,7 @@ app.set("view engine", "html");
 // front routing
 app.use(express.static(__dirname + "/demo/dist"));
 app.get("/", (req, res) => res.render("index"));
+app.get("/room", (req, res) => res.render("room"));
 app.get("/*", (_, res) => res.redirect("/"));
 
 httpServer.listen(3000, () => console.log("start server"));

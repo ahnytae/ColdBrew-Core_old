@@ -15,7 +15,8 @@ let micStatus = true;
 const addLocalVideo = (deviceId?: string) => {
   GetUserDevices.getDeviceStream(deviceId).then((device: GetMediaError) => {
     if (!device.isError) {
-      GetUserDevices.attachMediaStream(videoEl, device.stream);
+      const { stream } = device;
+      GetUserDevices.attachMediaStream(videoEl, stream);
     }
   });
 };
