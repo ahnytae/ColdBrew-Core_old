@@ -15,7 +15,7 @@ export class GetUserDevices extends ColdBrew {
   static async getDeviceStream(deviceId?: string): Promise<MediaStream | GetMediaError> {
     try {
       const stream = await navigator.mediaDevices.getUserMedia(
-        deviceId === undefined ? GetUserDevices.constraints : { audio: true, video: { deviceId: { exact: deviceId } } }
+        !deviceId ? GetUserDevices.constraints : { audio: true, video: { deviceId: { exact: deviceId } } }
       );
       if (stream) {
         ColdBrew.MyStream = stream;
