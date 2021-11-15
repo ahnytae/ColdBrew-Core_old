@@ -1,6 +1,9 @@
+import { io, Socket } from 'socket.io-client';
 import { ColdBrew } from '../service/Core';
+
 export class SignalingController extends ColdBrew {
   //
+  protected static WS: Socket;
   private static myPeerConnection: RTCPeerConnection;
   private static readonly STUN_URL = {
     iceServers: [
@@ -16,10 +19,22 @@ export class SignalingController extends ColdBrew {
     ],
   };
 
-  static joinRoom(roomName: string) {
+  private constructor() {
+    super();
+    SignalingController.WS = io();
+    console.log('%c HELLO ColeBrew', 'color: hotpink; font-size:40px; background:black');
+    console.log('%c [ColdBrew] connected socket', 'color: skyblue', SignalingController.WS);
+  }
+
+  static async init(): Promise<SignalingController> {
+    return new SignalingController();
+  }
+
+  static async joinRoom(roomName: string, remoteVideoEl: HTMLVideoElement) {
     super.RoomName = roomName;
-    ColdBrew.WS.emit('join-room', roomName);
-    this.connectSocket(roomName);
+    await this.init();
+    SignalingController.WS.emit('join-room', roomName);
+    this.connectSocket(roomName, remoteVideoEl);
   }
 
   // replace addStream to getTracks()
@@ -29,7 +44,7 @@ export class SignalingController extends ColdBrew {
     SignalingController.myPeerConnection.addEventListener('icecandidate', (ice: any) => {
       console.log('%c sent icecandidate', '%c color: red');
       const roomName = super.RoomName;
-      ColdBrew.WS.emit('ice', ice, roomName);
+      SignalingController.WS.emit('ice', ice, roomName);
     });
     SignalingController.myPeerConnection.addEventListener('track', (peerTrack: RTCTrackEvent) => {
       console.log('got remote peer stream', peerTrack.streams[0]);
@@ -40,28 +55,12 @@ export class SignalingController extends ColdBrew {
     stream.getTracks().map((track: MediaStreamTrack) => SignalingController.myPeerConnection.addTrack(track, stream));
   }
 
-  // iceCandidate connect
-  // static connectIceCandidate(remoteVideoEl: HTMLVideoElement) {
-  //   SignalingController.myPeerConnection.addEventListener('icecandidate', (ice: any) => {
-  //     console.log('%c sent icecandidate', '%c color: red');
-  //     const roomName = super.RoomName;
-  //     ColdBrew.WS.emit('ice', ice, roomName);
-  //   });
-  //   SignalingController.myPeerConnection.addEventListener('track', (peerTrack: any) => {
-  //     console.log('got remote peer stream', peerTrack);
-  //     remoteVideoEl.srcObject = peerTrack.streams[0];
-  //   });
-  // }
+  static connectSocket(roomName: string, remoteVideoEl: HTMLVideoElement) {
+    this.makePeerConnection(remoteVideoEl);
 
-  // static attachRemoteStream(remoteVideoEl?: HTMLVideoElement) {
-  //   SignalingController.connectIceCandidate(remoteVideoEl!);
-  // }
-
-  static connectSocket(roomName: string) {
-    // this.makePeerConnection();
-
+    /** socket area **/
     // role: offer
-    ColdBrew.WS.on('success-join', async () => {
+    SignalingController.WS.on('success-join', async () => {
       console.log('%c [ColdBrew] success join', 'color: #f3602b');
 
       // create offer + sdp
@@ -70,27 +69,27 @@ export class SignalingController extends ColdBrew {
 
       // send offer
       const roomName = ColdBrew.RoomName;
-      ColdBrew.WS.emit('offer', offer, roomName);
+      SignalingController.WS.emit('offer', offer, roomName);
       console.log('%c [ColdBrew] sent offer', 'color: #e64607bc', offer);
     });
 
-    ColdBrew.WS.on('answer', async (answer: any) => {
+    SignalingController.WS.on('answer', async (answer: any) => {
       console.log('%c [ColdBrew] received answer', 'color: #e64607bc', answer);
       await SignalingController.myPeerConnection.setRemoteDescription(answer);
     });
 
     // role: answer
-    ColdBrew.WS.on('offer', async (offer: any) => {
+    SignalingController.WS.on('offer', async (offer: any) => {
       console.log('%c [ColdBrew] received offer', offer, 'color: #05c088');
 
-      SignalingController.myPeerConnection.setRemoteDescription(offer);
+      await SignalingController.myPeerConnection.setRemoteDescription(offer);
       const answer = await SignalingController.myPeerConnection.createAnswer();
       SignalingController.myPeerConnection.setLocalDescription(answer);
-      ColdBrew.WS.emit('answer', answer, roomName);
+      SignalingController.WS.emit('answer', answer, roomName);
       console.log('%c [ColdBrew] sent answer', 'color: #e64607bc', answer);
     });
 
-    ColdBrew.WS.on('ice', (ice: any) => {
+    SignalingController.WS.on('ice', (ice: any) => {
       console.log('%c [ColdBrew] received icecandidate', ice, 'color: #d3d61e');
       SignalingController.myPeerConnection.addIceCandidate(ice);
     });

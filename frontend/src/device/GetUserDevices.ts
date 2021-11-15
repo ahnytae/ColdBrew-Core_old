@@ -12,7 +12,7 @@ export class GetUserDevices extends ColdBrew {
     return myStream.getVideoTracks()[0];
   }
 
-  static async getDeviceStream(deviceId?: string): Promise<MediaStream | GetMediaError> {
+  static async getDeviceStream(deviceId?: string): Promise<GetMediaError> {
     try {
       const stream = await navigator.mediaDevices.getUserMedia(
         !deviceId ? GetUserDevices.constraints : { audio: true, video: { deviceId: { exact: deviceId } } }

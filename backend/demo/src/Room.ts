@@ -16,22 +16,16 @@ const micDeviceList = document.getElementById("device-mic-list");
 let camStatus = true;
 let micStatus = true;
 
-const addLocalVideo = (deviceId?: string) => {
-  GetUserDevices.getDeviceStream(deviceId)
-    .then((device: GetMediaError) => {
-      if (!device.isError) {
-        const { stream } = device;
-        GetUserDevices.attachMediaStream(videoEl, stream);
-      }
-    })
-    // .then(() => {
-    //   SignalingController.joinRoom(roomName);
-    //   SignalingController.makePeerConnection(remoteVideoEl);
-    // });
+const addLocalVideo = async (deviceId?: string) => {
+  const getDevice = await GetUserDevices.getDeviceStream(deviceId);
 
-    .then(() => SignalingController.joinRoom(roomName))
-    .then(() => SignalingController.makePeerConnection(remoteVideoEl));
-  // .then(() => SignalingController.attachRemoteStream(remoteVideoEl));
+  if (!getDevice.isError) {
+    const { stream } = getDevice;
+    GetUserDevices.attachMediaStream(videoEl, stream);
+  }
+  if (!deviceId) {
+    await SignalingController.joinRoom(roomName, remoteVideoEl);
+  }
 };
 
 const getMicList = GetUserDevices.getSelectDeviceList("mic");
@@ -88,6 +82,5 @@ roomNameEl.addEventListener("input", (e: any) => {
 joinBtn.addEventListener("click", (e: any) => {
   e.preventDefault();
   console.log("current roomName", roomName);
-  ColdBrew.init();
   addLocalVideo();
 });
