@@ -1,4 +1,4 @@
-import ColdBrew from '../service/Core';
+import { ColdBrew } from '../service/Core';
 import { Constraints, GetMediaError, GetDeviceList, ChangeDeviceType } from './Device';
 
 export class GetUserDevices extends ColdBrew {
@@ -12,7 +12,7 @@ export class GetUserDevices extends ColdBrew {
     return myStream.getVideoTracks()[0];
   }
 
-  static async getDeviceStream(deviceId?: string): Promise<MediaStream | GetMediaError> {
+  static async getDeviceStream(deviceId?: string): Promise<GetMediaError> {
     try {
       const stream = await navigator.mediaDevices.getUserMedia(
         !deviceId ? GetUserDevices.constraints : { audio: true, video: { deviceId: { exact: deviceId } } }
@@ -96,7 +96,7 @@ export class GetUserDevices extends ColdBrew {
     }
   }
 
-  static async attachMediaStream(videoEl: HTMLVideoElement, stream: MediaStream) {
+  static async attachLocalVideo(videoEl: HTMLVideoElement, stream: MediaStream) {
     try {
       videoEl.srcObject = stream;
     } catch {
@@ -106,6 +106,7 @@ export class GetUserDevices extends ColdBrew {
 
   // device on/off
   static changeDeviceStatus(deviceType: ChangeDeviceType, status: boolean) {
+    console.log('status', deviceType, status);
     const myStream = ColdBrew.MyStream;
     if (deviceType === 'video') {
       try {
@@ -116,10 +117,12 @@ export class GetUserDevices extends ColdBrew {
       return;
     }
     // mic
-    try {
-      myStream.getAudioTracks().map((audioTrack: MediaStreamTrack) => (audioTrack.enabled = status));
-    } catch {
-      console.error('%c [ColdBrew] failed mute Mic', 'color: red');
+    if (deviceType === 'mic') {
+      try {
+        myStream.getAudioTracks().map((audioTrack: MediaStreamTrack) => (audioTrack.enabled = status));
+      } catch {
+        console.error('%c [ColdBrew] failed mute Mic', 'color: red');
+      }
     }
   }
 }
