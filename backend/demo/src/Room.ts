@@ -28,6 +28,8 @@ const addLocalVideo = async (deviceId?: string) => {
     SignalingController.joinRoom(roomName);
     SignalingController.attachRemoteVideo(remoteVideoEl);
   }
+
+  SignalingController.changeCamera();
 };
 
 const getMicList = GetUserDevices.getSelectDeviceList("mic");

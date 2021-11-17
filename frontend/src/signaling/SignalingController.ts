@@ -94,4 +94,16 @@ export class SignalingController extends ColdBrew {
       SignalingController.myPeerConnection.addIceCandidate(ice);
     });
   }
+
+  // change sync change camera
+  static changeCamera() {
+    if (SignalingController.myPeerConnection) {
+      console.log('change');
+      const stream = super.MyStream;
+      const videoTrack = stream.getVideoTracks()[0];
+
+      const cameraSender = SignalingController.myPeerConnection.getSenders().find(sender => sender.track?.kind === 'video');
+      cameraSender?.replaceTrack(videoTrack);
+    }
+  }
 }
