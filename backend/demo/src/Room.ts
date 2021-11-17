@@ -1,20 +1,14 @@
-import {
-  ColdBrew,
-  GetMediaError,
-  GetUserDevices,
-  SignalingController,
-} from "../../../frontend/src/index";
+import { GetUserDevices, SignalingController } from "../../../frontend/src/index";
+
+let roomName = "";
 
 const videoEl = document.getElementById("myVideo") as HTMLVideoElement;
-const remoteVideoEl = document.getElementById(
-  "remoteVideo"
-) as HTMLVideoElement;
+const remoteVideoEl = document.getElementById("remoteVideo") as HTMLVideoElement;
 
 const camToggle = document.getElementById("change-cam");
 const micToggle = document.getElementById("change-mic");
 
 const roomNameEl = document.getElementById("onRoomName");
-let roomName = "";
 const joinBtn = document.getElementById("join-btn");
 
 const camDeviceList = document.getElementById("device-cam-list");
@@ -28,11 +22,11 @@ const addLocalVideo = async (deviceId?: string) => {
 
   if (!getDevice.isError) {
     const { stream } = getDevice;
-    GetUserDevices.attachMediaStream(videoEl, stream);
+    GetUserDevices.attachLocalVideo(videoEl, stream);
   }
   if (!deviceId) {
-    await SignalingController.joinRoom(roomName);
-    SignalingController.makePeerConnection(remoteVideoEl);
+    SignalingController.joinRoom(roomName);
+    SignalingController.attachRemoteVideo(remoteVideoEl);
   }
 };
 

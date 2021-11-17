@@ -22,7 +22,7 @@ export class SignalingController extends ColdBrew {
   private constructor() {
     super();
     SignalingController.WS = io();
-    console.log('%c HELLO ColeBrew', 'color: hotpink; font-size:40px; background:black');
+    console.log('%c HELLO ColdBrew', 'color: hotpink; font-size:40px; background:black');
     console.log('%c [ColdBrew] connected socket', 'color: skyblue', SignalingController.WS);
   }
 
@@ -38,21 +38,20 @@ export class SignalingController extends ColdBrew {
   }
 
   // replace addStream to getTracks()
-  static makePeerConnection(remoteVideoEl: HTMLVideoElement) {
+  static attachRemoteVideo(remoteVideoEl: HTMLVideoElement) {
     SignalingController.myPeerConnection = new RTCPeerConnection(SignalingController.STUN_URL);
 
-    SignalingController.myPeerConnection.addEventListener('icecandidate', (ice: any) => {
+    SignalingController.myPeerConnection.addEventListener('icecandidate', (ice: RTCPeerConnectionIceEvent) => {
       console.log('%c sent icecandidate', '%color: red', ice);
       const roomName = super.RoomName;
-      SignalingController.WS.emit('ice', ice, roomName);
+      SignalingController.WS.emit('ice', ice.candidate, roomName);
     });
-    SignalingController.myPeerConnection.addEventListener('track', (peerTrack: any) => {
+    SignalingController.myPeerConnection.addEventListener('track', (peerTrack: RTCTrackEvent) => {
       console.log('got remote peer stream', peerTrack.streams[0]);
       remoteVideoEl.srcObject = peerTrack.streams[0];
     });
 
     const stream = ColdBrew.MyStream;
-    console.log('###', stream);
     stream.getTracks().map((track: MediaStreamTrack) => SignalingController.myPeerConnection.addTrack(track, stream));
   }
 
@@ -90,7 +89,7 @@ export class SignalingController extends ColdBrew {
       console.log('%c [ColdBrew] sent answer', 'color: #e64607bc', answer);
     });
 
-    SignalingController.WS.on('icecandidate', (ice: any) => {
+    SignalingController.WS.on('icecandidate', (ice: RTCIceCandidateInit) => {
       console.log('%c [ColdBrew] received icecandidate', 'color: #d3d61e', ice);
       SignalingController.myPeerConnection.addIceCandidate(ice);
     });
