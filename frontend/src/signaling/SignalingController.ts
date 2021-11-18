@@ -31,10 +31,10 @@ export class SignalingController extends ColdBrew {
     return new SignalingController();
   }
 
-  static async joinRoom(roomName: string) {
+  static async joinRoom(roomName: string, userName: string) {
     super.RoomName = roomName;
     await this.init();
-    SignalingController.WS.emit('join-room', roomName);
+    SignalingController.WS.emit('join-room', roomName, userName);
     this.connectSocket(roomName);
   }
 
@@ -61,8 +61,12 @@ export class SignalingController extends ColdBrew {
 
     /** socket area **/
     // role: offer
-    SignalingController.WS.on('success-join', async () => {
-      console.log('%c [ColdBrew] success join', 'color: #f3602b');
+    SignalingController.WS.on('Room-Info', (room: string, user: string) => {
+      console.log('%c [ColdBrew] Join Room|User', room, user);
+    });
+
+    SignalingController.WS.on('success-join', async (room: string, user: string) => {
+      console.log('%c [ColdBrew] success join', 'color: #f3602b', `roomname: ${room}, username: ${user}`);
 
       // create offer + sdp
       const offer = await SignalingController.myPeerConnection.createOffer();

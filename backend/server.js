@@ -3,10 +3,15 @@ const http = require("http");
 const SocketIO = require("socket.io");
 const engines = require("consolidate");
 const app = express();
+const cors = require('cors');
 
 const httpServer = http.createServer(app);
 const ioServer = SocketIO(httpServer);
 
+let ROOM_NAME = "";
+let USER_NAME = "";
+
+app.use(cors());
 // view 경로 설정
 app.set("views", __dirname + "/demo/dist");
 
@@ -18,19 +23,31 @@ app.set("view engine", "html");
 app.use(express.static(__dirname + "/demo/dist"));
 app.get("/", (req, res) => res.render("main"));
 app.get("/room", (req, res) => res.render("room"));
-app.get("/*", (_, res) => res.redirect("/"));
+// app.get("/*", (_, res) => res.redirect("/"));
+
+app.post('/join/:roomname/:username', (req, res) => {
+  console.log('##', req.params);
+  ROOM_NAME = req.params.roomname;
+  USER_NAME = req.params.username;
+  res.send({data: 'SUCCESS'})
+})
+app.get('/join', (req, res) => {
+  res.json({roomName: ROOM_NAME, userName: USER_NAME});
+})
+
 
 httpServer.listen(3000, () => console.log("start server"));
 
 // socket server
-let ROOM_NAME = "";
 ioServer.on("connection", (socket) => {
   console.log("connect socket server");
 
-  socket.on("join-room", (roomName) => {
+  socket.on("join-room", (roomName, userName) => {
     ROOM_NAME = roomName;
+    USER_NAME = userName;
     socket.join(roomName);
-    socket.to(ROOM_NAME).emit("success-join");
+    socket.to(ROOM_NAME).emit("success-join", roomName, userName);
+    // socket.to(ROOM_NAME).emit('Room-Info', roomName, userName)
   });
 
   // received offer

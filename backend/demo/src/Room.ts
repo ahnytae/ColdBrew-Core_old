@@ -4,8 +4,6 @@ import {
   SignalingController,
 } from "../../../frontend/src/index";
 
-let roomName = "";
-
 const videoEl = document.getElementById("myVideo") as HTMLVideoElement;
 const remoteVideoEl = document.getElementById(
   "remoteVideo"
@@ -14,14 +12,17 @@ const remoteVideoEl = document.getElementById(
 const camToggle = document.getElementById("change-cam");
 const micToggle = document.getElementById("change-mic");
 
-const roomNameEl = document.getElementById("onRoomName");
-const joinBtn = document.getElementById("join-btn");
-
 const camDeviceList = document.getElementById("device-cam-list");
 const micDeviceList = document.getElementById("device-mic-list");
 
 let camStatus = true;
 let micStatus = true;
+
+const fetchJoin = async () => {
+  const res = await fetch("/join");
+  const data = await res.json();
+  return data;
+};
 
 const addLocalVideo = async (
   deviceId?: string,
@@ -34,7 +35,9 @@ const addLocalVideo = async (
     GetUserDevices.attachLocalVideo(videoEl, stream);
   }
   if (!deviceId) {
-    SignalingController.joinRoom(roomName);
+    const roomInfo = await fetchJoin();
+    const { roomName, userName } = roomInfo;
+    SignalingController.joinRoom(roomName, userName);
     SignalingController.attachRemoteVideo(remoteVideoEl);
   }
 
@@ -94,14 +97,6 @@ micDeviceList.addEventListener("input", (e: any) => {
   addLocalVideo(value, "mic");
 });
 
-// join
-roomNameEl.addEventListener("input", (e: any) => {
-  let { value } = e.target;
-  roomName = value;
-});
-
-joinBtn.addEventListener("click", (e: any) => {
-  e.preventDefault();
-  console.log("current roomName", roomName);
+window.addEventListener("load", () => {
   addLocalVideo();
 });
