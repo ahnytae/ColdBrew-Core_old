@@ -1,9 +1,15 @@
-import { GetUserDevices, SignalingController } from "../../../frontend/src/index";
+import { ChangeDeviceType } from "../../../frontend/src/index";
+import {
+  GetUserDevices,
+  SignalingController,
+} from "../../../frontend/src/index";
 
 let roomName = "";
 
 const videoEl = document.getElementById("myVideo") as HTMLVideoElement;
-const remoteVideoEl = document.getElementById("remoteVideo") as HTMLVideoElement;
+const remoteVideoEl = document.getElementById(
+  "remoteVideo"
+) as HTMLVideoElement;
 
 const camToggle = document.getElementById("change-cam");
 const micToggle = document.getElementById("change-mic");
@@ -17,7 +23,10 @@ const micDeviceList = document.getElementById("device-mic-list");
 let camStatus = true;
 let micStatus = true;
 
-const addLocalVideo = async (deviceId?: string) => {
+const addLocalVideo = async (
+  deviceId?: string,
+  deviceType?: ChangeDeviceType
+) => {
   const getDevice = await GetUserDevices.getDeviceStream(deviceId);
 
   if (!getDevice.isError) {
@@ -29,7 +38,15 @@ const addLocalVideo = async (deviceId?: string) => {
     SignalingController.attachRemoteVideo(remoteVideoEl);
   }
 
-  SignalingController.changeCamera();
+  if (deviceType) {
+    if (deviceType === "video") {
+      SignalingController.changeCamera("video");
+      return;
+    } else if (deviceType === "mic") {
+      SignalingController.changeCamera("mic");
+      return;
+    }
+  }
 };
 
 const getMicList = GetUserDevices.getSelectDeviceList("mic");
@@ -38,7 +55,7 @@ getMicList.then((list) => {
     const option = document.createElement("option");
     option.value = item.deviceId;
     option.innerHTML = item.label;
-    camDeviceList.appendChild(option);
+    micDeviceList.appendChild(option);
   });
 });
 
@@ -49,7 +66,7 @@ getCamList.then((list) => {
     const option = document.createElement("option");
     option.value = item.deviceId;
     option.innerHTML = item.label;
-    micDeviceList.appendChild(option);
+    camDeviceList.appendChild(option);
   });
 });
 
@@ -69,12 +86,12 @@ micToggle.addEventListener("click", () => {
 // change device function
 camDeviceList.addEventListener("input", (e: any) => {
   const { value } = e.target;
-  addLocalVideo(value);
+  addLocalVideo(value, "video");
 });
 
 micDeviceList.addEventListener("input", (e: any) => {
   const { value } = e.target;
-  addLocalVideo(value);
+  addLocalVideo(value, "mic");
 });
 
 // join

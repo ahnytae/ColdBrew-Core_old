@@ -1,4 +1,5 @@
 import { io, Socket } from 'socket.io-client';
+import { ChangeDeviceType } from '../index';
 import { ColdBrew } from '../service/Core';
 
 export class SignalingController extends ColdBrew {
@@ -89,21 +90,30 @@ export class SignalingController extends ColdBrew {
       console.log('%c [ColdBrew] sent answer', 'color: #e64607bc', answer);
     });
 
-    SignalingController.WS.on('icecandidate', (ice: RTCIceCandidateInit) => {
+    SignalingController.WS.on('icecandidate', (ice: any) => {
       console.log('%c [ColdBrew] received icecandidate', 'color: #d3d61e', ice);
       SignalingController.myPeerConnection.addIceCandidate(ice);
     });
   }
 
   // change sync change camera
-  static changeCamera() {
+  static changeCamera(type: ChangeDeviceType) {
     if (SignalingController.myPeerConnection) {
-      console.log('change');
       const stream = super.MyStream;
-      const videoTrack = stream.getVideoTracks()[0];
-
-      const cameraSender = SignalingController.myPeerConnection.getSenders().find(sender => sender.track?.kind === 'video');
-      cameraSender?.replaceTrack(videoTrack);
+      if (type === 'video') {
+        const videoTrack = stream.getVideoTracks()[0];
+        const cameraSender = SignalingController.myPeerConnection.getSenders().find(sender => sender.track?.kind === 'video');
+        console.log('%c [ColdBrew] changed camera', 'color: orangered');
+        cameraSender?.replaceTrack(videoTrack);
+        return;
+      }
+      // audio
+      const audioTrack = stream.getAudioTracks()[0];
+      const audioSender = SignalingController.myPeerConnection.getSenders().find(sender => sender.track?.kind === 'audio');
+      console.log('%c [ColdBrew] changed mic', 'color: orangered');
+      audioSender?.replaceTrack(audioTrack);
+      return;
     }
+    console.error('Stream not found');
   }
 }

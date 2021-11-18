@@ -7,11 +7,11 @@ type SelectDeviceIdConstraints = {
   video: { deviceId: { exact: string } };
   audio: boolean;
 };
-export type Constraints = NormalConstraints | SelectDeviceIdConstraints;
+type Constraints = NormalConstraints | SelectDeviceIdConstraints;
 
-export type ChangeDeviceType = 'video' | 'mic';
+type ChangeDeviceType = 'video' | 'mic';
 
-export type GetMediaError = {
+type GetMediaError = {
   isError: boolean;
   errorData?: {
     name: string;
@@ -20,7 +20,7 @@ export type GetMediaError = {
   stream?: MediaStream;
 };
 
-export type GetDeviceList = {
+type GetDeviceList = {
   isError: boolean;
   errorData?: {
     name: string;
@@ -28,3 +28,5 @@ export type GetDeviceList = {
   };
   list?: MediaDeviceInfo[];
 };
+
+export { Constraints, ChangeDeviceType, GetMediaError, GetDeviceList };
