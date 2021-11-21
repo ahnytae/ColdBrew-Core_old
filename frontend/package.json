@@ -1,12 +1,22 @@
 {
-  "name": "frontend",
+  "name": "coldbrew-test02",
   "version": "1.0.0",
-  "main": "index.js",
   "license": "MIT",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "scripts": {
-    "start": "tsc && node src/index.ts"
+    "start": "tsc && node src/index.ts",
+    "build": "rollup -c"
   },
   "devDependencies": {
+    "@rollup/plugin-alias": "^3.1.8",
+    "@rollup/plugin-commonjs": "^21.0.1",
+    "@rollup/plugin-node-resolve": "^13.0.6",
+    "rollup": "^2.60.0",
+    "rollup-plugin-dts": "^4.0.1",
+    "rollup-plugin-prettier": "^2.2.0",
+    "rollup-plugin-typescript2": "^0.31.0",
+    "rollup-plugin-uglify": "^6.0.4",
     "ts-node": "^10.4.0"
   },
   "dependencies": {
