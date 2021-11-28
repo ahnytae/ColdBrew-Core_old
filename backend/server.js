@@ -3,7 +3,7 @@ const http = require("http");
 const SocketIO = require("socket.io");
 const engines = require("consolidate");
 const app = express();
-const cors = require('cors');
+const cors = require("cors");
 
 const httpServer = http.createServer(app);
 const ioServer = SocketIO(httpServer);
@@ -25,16 +25,15 @@ app.get("/", (req, res) => res.render("main"));
 app.get("/room", (req, res) => res.render("room"));
 // app.get("/*", (_, res) => res.redirect("/"));
 
-app.post('/join/:roomname/:username', (req, res) => {
-  console.log('##', req.params);
+app.post("/join/:roomname/:username", (req, res) => {
+  console.log("##", req.params);
   ROOM_NAME = req.params.roomname;
   USER_NAME = req.params.username;
-  res.send({data: 'SUCCESS'})
-})
-app.get('/join', (req, res) => {
-  res.json({roomName: ROOM_NAME, userName: USER_NAME});
-})
-
+  res.send({ data: "SUCCESS" });
+});
+app.get("/join", (req, res) => {
+  res.json({ roomName: ROOM_NAME, userName: USER_NAME });
+});
 
 httpServer.listen(3000, () => console.log("start server"));
 
@@ -62,6 +61,15 @@ ioServer.on("connection", (socket) => {
 
   socket.on("ice", (ice, roomName) => {
     socket.to(roomName).emit("icecandidate", ice);
+  });
+
+  socket.on("disconnect", () => {
+    socket.to(ROOM_NAME).emit("leave", `leaveUser`);
+  });
+
+  socket.on("leave-room", () => {
+    socket.leave(ROOM_NAME);
+    socket.to(ROOM_NAME).emit("leave-user", socket.rooms);
   });
 });
 

@@ -1,19 +1,16 @@
 import { ChangeDeviceType } from "../../../frontend/src/index";
-import {
-  GetUserDevices,
-  SignalingController,
-} from "../../../frontend/src/index";
+import { GetUserDevices, SignalingController } from "../../../frontend/src/index";
 
 const videoEl = document.getElementById("myVideo") as HTMLVideoElement;
-const remoteVideoEl = document.getElementById(
-  "remoteVideo"
-) as HTMLVideoElement;
+const remoteVideoEl = document.getElementById("remoteVideo") as HTMLVideoElement;
 
 const camToggle = document.getElementById("change-cam");
 const micToggle = document.getElementById("change-mic");
 
 const camDeviceList = document.getElementById("device-cam-list");
 const micDeviceList = document.getElementById("device-mic-list");
+
+const leaveRoomBtn = document.getElementById("leave-btn");
 
 let camStatus = true;
 let micStatus = true;
@@ -24,10 +21,7 @@ const fetchJoin = async () => {
   return data;
 };
 
-const addLocalVideo = async (
-  deviceId?: string,
-  deviceType?: ChangeDeviceType
-) => {
+const addLocalVideo = async (deviceId?: string, deviceType?: ChangeDeviceType) => {
   const getDevice = await GetUserDevices.getDeviceStream(deviceId);
 
   if (!getDevice.isError) {
@@ -95,6 +89,12 @@ camDeviceList.addEventListener("input", (e: any) => {
 micDeviceList.addEventListener("input", (e: any) => {
   const { value } = e.target;
   addLocalVideo(value, "mic");
+});
+
+// leave room
+leaveRoomBtn.addEventListener("click", () => {
+  SignalingController.leaveRoomHandler(videoEl);
+  // location.href = "exit";
 });
 
 window.addEventListener("load", () => {
