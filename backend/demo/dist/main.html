@@ -1,18 +1,28 @@
 <!DOCTYPE html>
-<html lang="en"><head>
+<html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Demo</title>
-   </head>
+    <link rel="stylesheet" type="text/css" href="./reset.css" />
+    <link rel="stylesheet" type="text/css" href="./main.css" />
+  </head>
+
   <body>
-    <h1>video call - demo</h1>
-    <form id='join-information' action="#" method="get">
-      <input id="roomName" type="text" placeholder="room name" />
-      <input id="userName" type="text" placeholder="user name" />
-      <button type="submit">입장</button>
-    </form>
+    <div class="main-wrapper">
+      <div class="main-sub-wrapper">
+        <h1 class="main-sub-title">입장 하기</h1>
+        <div class="main-sub-image">
+          <img src="https://media.istockphoto.com/photos/online-conference-of-diverse-employees-on-the-screen-picture-id1313246059?b=1&k=20&m=1313246059&s=170667a&w=0&h=eT1_ETl-bStWQV0ZSdTKwUuETUzRVzxHB9G9YWth0Zs=" alt="sub-image"></img>
+        </div>
+      </div>
+      <form id="join-form" action="#" method="get">
+        <input id="roomName" type="text" placeholder="room name" />
+        <input id="userName" type="text" placeholder="user name" />
+        <button type="submit">Join</button>
+      </form>
+    </div>
     <script defer src="main.js"></script>
   </body>
 </html>

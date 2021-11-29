@@ -1,7 +1,7 @@
 const roomNameEl = document.getElementById("roomName");
 const userNameEl = document.getElementById("userName");
 
-const joinBtn = document.getElementById("join-information");
+const joinBtn = document.getElementById("join-form");
 
 let roomName = "";
 let userName = "";
