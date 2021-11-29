@@ -1,23 +1,39 @@
 <!DOCTYPE html>
-<html lang="en"><head>
+<html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Demo</title>
-   </head>
+    <link rel="stylesheet" type="text/css" href="./reset.css" />
+    <link rel="stylesheet" type="text/css" href="./room.css" />
+  </head>
+
   <body>
-    <h1>video call - demo</h1>
-    <div>
-      <select id='device-cam-list'></select>
-      <select id='device-mic-list'></select>
-      <video id="myVideo" muted autoplay playsinline width="400", height="400"></video>
-      <video id="remoteVideo" autoplay playsinline width="400", height="400"></video>
+    <div class="room-wrapper">
+      <div class="video-container">
+        <video id="myVideo" muted autoplay playsinline width="400" , height="400"></video>
+        <video id="remoteVideo" autoplay playsinline width="400" , height="400"></video>
+      </div>
 
-      <button id="change-cam">cam-off</button>
-      <button id="change-mic">mic-off</button>
+      <div class="footer-container">
+        <button id="change-cam">cam-off</button>
+        <button id="change-mic">mic-off</button>
+        <button id="device-select">change-device</button>
+        <button id="leave-btn">leave room</button>
+      </div>
 
-      <button id="leave-btn">leave room</button>
+      <ul id="device-list" class="device-list-container">
+        <div class="camera-list">
+          <span>Camera list</span>
+          <select id="device-cam-list"></select>
+        </div>
+        <div class="audio-list">
+          <span>Audio list</span
+          ><select id="device-mic-list"></select>
+        </div>
+        <button id="device-select-close">Close</button>
+      </ul>
     </div>
     <script defer src="room.js"></script>
   </body>
