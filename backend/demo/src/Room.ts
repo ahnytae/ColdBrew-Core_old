@@ -7,6 +7,10 @@ const remoteVideoEl = document.getElementById("remoteVideo") as HTMLVideoElement
 const camToggle = document.getElementById("change-cam");
 const micToggle = document.getElementById("change-mic");
 
+const showDeviceList = document.getElementById("device-list");
+const closeDeviceList = document.getElementById("device-select-close");
+
+const onClickDeviceSelect = document.getElementById("device-select");
 const camDeviceList = document.getElementById("device-cam-list");
 const micDeviceList = document.getElementById("device-mic-list");
 
@@ -70,17 +74,27 @@ getCamList.then((list) => {
 // cam, mic on/off
 camToggle.addEventListener("click", () => {
   camStatus = !camStatus;
-  camToggle.innerHTML = `cam-${camStatus}`;
+  camToggle.innerHTML = `cam-${!camStatus ? "off" : "on"}`;
   GetUserDevices.changeDeviceStatus("video", camStatus);
 });
 
 micToggle.addEventListener("click", () => {
   micStatus = !micStatus;
-  micToggle.innerHTML = `mic-${micStatus}`;
+  micToggle.innerHTML = `mic-${!micStatus ? "off" : "on"}`;
   GetUserDevices.changeDeviceStatus("mic", micStatus);
 });
 
 // change device function
+showDeviceList.hidden = true;
+
+onClickDeviceSelect.addEventListener("click", () => {
+  showDeviceList.hidden = showDeviceList.hidden === false ? true : false;
+});
+
+closeDeviceList.addEventListener("click", () => {
+  showDeviceList.hidden = true;
+});
+
 camDeviceList.addEventListener("input", (e: any) => {
   const { value } = e.target;
   addLocalVideo(value, "video");
@@ -94,7 +108,11 @@ micDeviceList.addEventListener("input", (e: any) => {
 // leave room
 leaveRoomBtn.addEventListener("click", () => {
   SignalingController.leaveRoomHandler(videoEl);
-  // location.href = "exit";
+  alert("종료 되었습니다.");
+
+  setTimeout(() => {
+    location.href = "exit";
+  }, 500);
 });
 
 window.addEventListener("load", () => {
