@@ -88,7 +88,7 @@ micToggle.addEventListener("click", () => {
 showDeviceList.hidden = true;
 
 onClickDeviceSelect.addEventListener("click", () => {
-  showDeviceList.hidden = showDeviceList.hidden === false ? true : false;
+  showDeviceList.hidden = showDeviceList.hidden ? false : true;
 });
 
 closeDeviceList.addEventListener("click", () => {
