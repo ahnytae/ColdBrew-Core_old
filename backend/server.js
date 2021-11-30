@@ -23,6 +23,7 @@ app.set("view engine", "html");
 app.use(express.static(__dirname + "/demo/dist"));
 app.get("/", (req, res) => res.render("main"));
 app.get("/room", (req, res) => res.render("room"));
+app.get("/exit", (req, res) => res.render("exit"));
 // app.get("/*", (_, res) => res.redirect("/"));
 
 app.post("/join/:roomname/:username", (req, res) => {
