@@ -1,5 +1,5 @@
-import { ChangeDeviceType } from "../../../frontend/src/index";
-import { GetUserDevices, SignalingController } from "../../../frontend/src/index";
+import { ChangeDeviceType } from "../../../core/src/index";
+import { GetUserDevices, SignalingController } from "../../../core/src/index";
 
 const videoEl = document.getElementById("myVideo") as HTMLVideoElement;
 const remoteVideoEl = document.getElementById("remoteVideo") as HTMLVideoElement;
