@@ -5,7 +5,7 @@
   "license": "MIT",
   "scripts": {
     "dev": "nodemon",
-    "start": "node dist/server.js"
+    "start": "nodemon"
   },
   "dependencies": {
     "express": "^4.17.1",
